@@ -61,6 +61,7 @@ contract VRFv2Consumer is VRFConsumerBaseV2, ConfirmedOwner {
     mapping(uint => range) public data;
     mapping(uint => address) public listAdd;
     uint256 public result;
+    address public winner;
 
     uint maxNum = 0;
     uint id = 0;
@@ -169,12 +170,14 @@ contract VRFv2Consumer is VRFConsumerBaseV2, ConfirmedOwner {
         uint randomNum = result % (maxNum +1);
         uint searchId = binarySearchId(0, id, randomNum);
         address searchAdd = listAdd[searchId];
+        winner = searchAdd;
         payable(searchAdd).transfer(address(this).balance);
         
         //reset
         maxNum = 0;
         id = 0;
         result = 0;
+        //winner = address(0);
     }
     
     modifier validateIsManager() {

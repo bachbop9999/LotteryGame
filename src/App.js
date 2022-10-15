@@ -13,13 +13,14 @@ function App() {
   // console.log(web3.version)
   // web3.eth.getAccounts().then(console.log)
 
-  const [manager, setManager] = useState('')
-  const [result, setResult] = useState('')
-  const [players, setPlayers] = useState([])
-  const [balance, setBalance] = useState('') // Note: balance is not a number - it's an object (wrapped in a library called BignumberJS)
-  const [value, setValue] = useState(0)
-  const [message, setMessage] = useState('')
-  const [msgLoading, setMsgLoading] = useState('')
+  const [manager, setManager] = useState('');
+  const [result, setResult] = useState('0');
+  const [winner, setWinner] = useState('0x0000000000000000000000000000000000000000')
+  const [players, setPlayers] = useState([]);
+  const [balance, setBalance] = useState(''); // Note: balance is not a number - it's an object (wrapped in a library called BignumberJS)
+  const [value, setValue] = useState(0);
+  const [message, setMessage] = useState('');
+  const [msgLoading, setMsgLoading] = useState('');
   const [currentUser, setCurrentUser] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -32,10 +33,12 @@ function App() {
         setCurrentUser(value);
       });
       const result = await lottery.methods.result().call()
+      const winner = await lottery.methods.winner().call()
       const manager = await lottery.methods.manager().call()
       // const players = await lottery.methods.getPlayers().call()
       const balance = await web3.eth.getBalance(lottery.options.address)
       setResult(result);
+      setWinner(winner);
       setManager(manager)
       // setPlayers(players)
       setBalance(balance)
@@ -125,14 +128,15 @@ function App() {
         from: accounts[0],
       })
       setIsLoading(false);
-      notification.open({
-        message: 'Notification',
-        description: 'Transfered award to winner!',
-        className: 'custom-class',
-        style: {
-          width: 400,
-        },
-      });
+      setIsModalOpen(true);
+      // notification.open({
+      //   message: 'Notification',
+      //   description: 'Transfered award to winner!',
+      //   className: 'custom-class',
+      //   style: {
+      //     width: 400,
+      //   },
+      // });
     } catch (error) {
       setIsLoading(false);
       notification.open({
@@ -170,16 +174,14 @@ function App() {
 
   return (
     <Spin tip={msgLoading} indicator={antIcon} spinning={isLoading}>
-      <Modal title="Notification" open={isModalOpen} onOk={handleOk}
+      <Modal title="Congratulation" open={isModalOpen} onOk={handleOk}
       footer={[
         <Button key="back" onClick={handleCancel}>
           OK
         </Button>,
       ]}>
         
-        <p>Some contents...</p>
-        <p>Some contents...</p>
-        <p>Some contents...</p>
+        <p>{winner}</p> 
       </Modal>
       <Layout className="layout">
         <Header>
@@ -207,10 +209,12 @@ function App() {
                   <p>
                     This contract is managed by {manager}.
                   </p>
-                  {/* {result ?
+                  {result !== '0' ?
                     <p>Random number: {result}</p> : <></>
-                  } */}
-                  <p>Random number: {result}</p>
+                  }
+                  {/* {winner !== '0x0000000000000000000000000000000000000000' ?
+                    <p>Winner: {winner}</p> : <></>
+                  }                 */}
                 </div>
                 <div>
                   {currentUser == manager ? <div>

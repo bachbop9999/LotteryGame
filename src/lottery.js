@@ -1,6 +1,6 @@
 import web3 from './web3'
 
-const address = '0x5145De3DE691AF073dd34A0e3f9e68CD91F30F4d'
+const address = '0xC3A91586F9e1A6eBf4dbB6aB0c552aB9c62f2548'
 const abi = [
 	{
 		"inputs": [
@@ -330,6 +330,19 @@ const abi = [
 		"name": "transferOwnership",
 		"outputs": [],
 		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "winner",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
 		"type": "function"
 	}
 ]
