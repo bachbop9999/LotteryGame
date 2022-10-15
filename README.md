@@ -8,9 +8,13 @@
 
 - Web3 (JavaScript interface to Ethereum blockchain)
 
+### To install
+
+- 'npm install' - install packages
+
 ### To run
 
-- `yarn start` - start the app
+- `npm start` - start the app
 
 ### Improvement points
 
