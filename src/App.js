@@ -24,11 +24,12 @@ function App() {
   const [currentUser, setCurrentUser] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSentRequest, setIsSentRequest] = useState(false);
 
   useEffect(() => {
     const getManager = async () => {
       // Don't need to set from argument because we're using the Metamask provider
-      
+
       const accounts = await web3.eth.getAccounts().then((value) => {
         setCurrentUser(value);
       });
@@ -47,13 +48,13 @@ function App() {
     getManager()
   }, [manager, players, balance])
 
-  
+
 
   const onSubmit = async (event) => {
     // event.preventDefault()
     setIsLoading(true);
     setMsgLoading('Waiting on transaction success...');
-    
+
     // Need to define from argument when using send method
     const accounts = await web3.eth.getAccounts()
 
@@ -95,6 +96,7 @@ function App() {
       await lottery.methods.requestRandomWords().send({
         from: accounts[0],
       })
+      setIsSentRequest(true);
       setIsLoading(false);
       notification.open({
         message: 'Notification',
@@ -175,13 +177,12 @@ function App() {
   return (
     <Spin tip={msgLoading} indicator={antIcon} spinning={isLoading}>
       <Modal title="Congratulation" open={isModalOpen} onOk={handleOk}
-      footer={[
-        <Button key="back" onClick={handleCancel}>
-          OK
-        </Button>,
-      ]}>
-        
-        <p>{winner}</p> 
+        footer={[
+          <Button key="back" onClick={handleCancel}>
+            OK
+          </Button>,
+        ]}>
+        <p>{winner}</p>
       </Modal>
       <Layout className="layout">
         <Header>
@@ -217,10 +218,10 @@ function App() {
                   }                 */}
                 </div>
                 <div>
-                  {currentUser == manager ? <div>
-                    <Row align='center'><Button size='large' disabled={web3.utils.fromWei(balance, 'ether') === '0'} onClick={onClick} type='primary'>Pick a random number</Button>
-                    <Button size='large' style={{marginLeft: '5px'}} disabled={result === '0'} onClick={onClickTransfer} type='primary'>Transfer award</Button></Row>
-                  </div> : <></>}
+                  <Row align='center'>
+                    <Button size='large' disabled={(web3.utils.fromWei(balance, 'ether') === '0' && result === '0') || isSentRequest == true} onClick={onClick} type='primary'>Pick a random number</Button>
+                    <Button size='large' style={{ marginLeft: '5px' }} disabled={result === '0'} onClick={onClickTransfer} type='primary'>Transfer award</Button>
+                  </Row>
                 </div>
               </Row>
 
@@ -236,7 +237,7 @@ function App() {
                     {/* <InputNumber defaultValue={0} onChange={(e) => setValue(e)}/> */}
                     {/* <label style={{marginLeft : '5px'}}> = {value * 0.01} ETH </label> */}
                   </div>
-                  <Button style={{marginTop : '10px', width: '200px'}} type='primary' htmlType="submit">Pay</Button>
+                  <Button style={{ marginTop: '10px', width: '200px' }} type='primary' htmlType="submit">Pay</Button>
                 </Form>
               </Row>
 
